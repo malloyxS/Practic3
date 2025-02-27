@@ -1,19 +1,22 @@
-from UserClass import User, Admin
+from data_handler import DataHandler
+from user import User, Admin
 from film import Film
 
 class Cinema:
     def __init__(self):
-        self.users = []
-        self.films = []
+        self.data_handler = DataHandler()
+        self.users, self.films = self.data_handler.load_data()
         self.current_user = None
 
     def add_user(self, username, password):
         new_user = User(username, password)
         self.users.append(new_user)
+        self.data_handler.save_data(self.users, self.films)
 
     def add_admin(self, username, password):
         new_admin = Admin(username, password)
         self.users.append(new_admin)
+        self.data_handler.save_data(self.users, self.films)
 
     def authenticate(self, username, password):
         for user in self.users:
@@ -39,9 +42,11 @@ class Cinema:
     def add_film(self, title, genre, year, rating):
         new_film = Film(title, genre, year, rating)
         self.films.append(new_film)
+        self.data_handler.save_data(self.users, self.films)
 
     def remove_film(self, title):
         self.films = [film for film in self.films if film.title != title]
+        self.data_handler.save_data(self.users, self.films)
 
     def view_films(self):
         return self.films
@@ -133,7 +138,9 @@ class Cinema:
 
     def display_films_from_list(self, films):
         if films:
-            self.display_films(films)
+            print("\nФильмы по заданным критериям:")
+            for film in films:
+                print(film)
         else:
             print("Нет доступных фильмов по заданным критериям.")
 
